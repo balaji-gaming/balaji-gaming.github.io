@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lucky Draw Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #22c55e;
+      color: #000;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎡 Lucky Draw Game</h1>
+
+  <div class="container">
+    <input type="text" id="name" placeholder="Enter your name" />
+    <input type="tel" id="phone" placeholder="Enter 10-digit phone number" />
+
+    <button onclick="playGame()" id="spinBtn">SPIN</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function playGame() {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (!name) {
+        alert("Please enter your name");
+        return;
+      }
+
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        alert("Enter valid 10-digit Indian phone number");
+        return;
+      }
+
+      const prizes = [
+        "Prize 1 🎁",
+        "Prize 2 🎉",
+        "Prize 3 🎊",
+        "Prize 4 🏆",
+        "Better Luck Next Time 🙂"
+      ];
+
+      const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+
+      document.getElementById("result").innerText =
+        `Congratulations ${name}! You got: ${randomPrize}`;
+
+      document.getElementById("spinBtn").disabled = true;
+    }
+  </script>
+
+</body>
+</html>
