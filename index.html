@@ -49,6 +49,7 @@ button:disabled {
   width: 260px;
   height: 260px;
   margin: 30px auto;
+  padding-bottom: 10px; /* Optional visual adjustment */
 }
 
 .wheel {
@@ -67,9 +68,9 @@ button:disabled {
 
 .pointer {
   position: absolute;
-  top: -14px;
+  bottom: -14px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(180deg);
   width: 0;
   height: 0;
   border-left: 12px solid transparent;
@@ -129,20 +130,21 @@ function spinWheel() {
     return;
   }
 
-  // LOCK GAME
+  // LOCK GAME IMMEDIATELY
   spinBtn.disabled = true;
   localStorage.setItem("played", "yes");
 
   // RESET ROTATION
   wheel.style.transition = "none";
   wheel.style.transform = "rotate(0deg)";
-  wheel.offsetHeight;
+  wheel.offsetHeight; // force reflow
 
-  // SPIN
+  // SPIN WHEEL
   const spinDegree = 3600 + Math.floor(Math.random() * 360);
   wheel.style.transition = "transform 4s ease-out";
   wheel.style.transform = `rotate(${spinDegree}deg)`;
 
+  // PRIZES
   const prizes = [
     "Prize 1 🎁",
     "Prize 2 🎉",
@@ -152,7 +154,8 @@ function spinWheel() {
   ];
 
   setTimeout(() => {
-    const actualDeg = spinDegree % 360;
+    // Correct calculation for bottom pointer
+    const actualDeg = (spinDegree + 180) % 360;
     const index = Math.floor(actualDeg / 72);
     const prize = prizes[4 - index];
 
