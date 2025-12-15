@@ -110,12 +110,6 @@ const spinBtn = document.getElementById("spinBtn");
 const wheel = document.getElementById("wheel");
 const resultDiv = document.getElementById("result");
 
-// ONE CHANCE CHECK
-if (localStorage.getItem("played")) {
-  spinBtn.disabled = true;
-  resultDiv.innerText = "You have already played!";
-}
-
 function spinWheel() {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
@@ -129,10 +123,6 @@ function spinWheel() {
     alert("Enter valid 10-digit Indian phone number");
     return;
   }
-
-  // LOCK GAME IMMEDIATELY
-  spinBtn.disabled = true;
-  localStorage.setItem("played", "yes");
 
   // RESET ROTATION
   wheel.style.transition = "none";
