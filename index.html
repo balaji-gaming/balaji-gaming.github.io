@@ -1,94 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lucky Draw Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-    }
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 6px;
-      background: #22c55e;
-      color: #000;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background: gray;
-      cursor: not-allowed;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Draw Game</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle, #020617, #020617);
+  color: #fff;
+  text-align: center;
+}
+
+.container {
+  margin-top: 40px;
+}
+
+input {
+  padding: 10px;
+  margin: 8px;
+  width: 260px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  padding: 12px 25px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.wheel-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 30px auto;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  transition: transform 4s ease-out;
+  background: conic-gradient(
+    #ef4444 0deg 72deg,
+    #f59e0b 72deg 144deg,
+    #22c55e 144deg 216deg,
+    #3b82f6 216deg 288deg,
+    #a855f7 288deg 360deg
+  );
+}
+
+.pointer {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 20px solid white;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+}
+</style>
 </head>
+
 <body>
 
-  <h1>🎡 Lucky Draw Game</h1>
+<h1>🎡 Lucky Draw Game</h1>
 
-  <div class="container">
-    <input type="text" id="name" placeholder="Enter your name" />
-    <input type="tel" id="phone" placeholder="Enter 10-digit phone number" />
+<div class="container">
+  <input id="name" placeholder="Enter your name">
+  <br>
+  <input id="phone" placeholder="Enter 10-digit phone number">
+  <br><br>
 
-    <button onclick="playGame()" id="spinBtn">SPIN</button>
-
-    <div id="result"></div>
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
   </div>
 
-  <script>
-    function playGame() {
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+  <button onclick="spinWheel()" id="spinBtn">SPIN</button>
 
-      if (!name) {
-        alert("Please enter your name");
-        return;
-      }
+  <div id="result"></div>
+</div>
 
-      if (!/^[6-9]\d{9}$/.test(phone)) {
-        alert("Enter valid 10-digit Indian phone number");
-        return;
-      }
+<script>
+let hasPlayed = localStorage.getItem("played");
 
-      const prizes = [
-        "Prize 1 🎁",
-        "Prize 2 🎉",
-        "Prize 3 🎊",
-        "Prize 4 🏆",
-        "Better Luck Next Time 🙂"
-      ];
+if (hasPlayed) {
+  document.getElementById("spinBtn").disabled = true;
+  document.getElementById("result").innerText =
+    "You have already played!";
+}
 
-      const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+function spinWheel() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
 
-      document.getElementById("result").innerText =
-        `Congratulations ${name}! You got: ${randomPrize}`;
+  if (!name) return alert("Enter your name");
+  if (!/^[6-9]\d{9}$/.test(phone)) {
+    return alert("Enter valid 10-digit Indian number");
+  }
 
-      document.getElementById("spinBtn").disabled = true;
-    }
-  </script>
+  const wheel = document.getElementById("wheel");
+  const spinDegree = Math.floor(3600 + Math.random() * 360);
+  wheel.style.transform = `rotate(${spinDegree}deg)`;
 
-</body>
-</html>
+  const prizes = [
+    "Prize 1 🎁",
+    "Prize 2 🎉",
+    "Prize 3 🎊",
+    "Prize 4 🏆",
+    "Better Luck Next Time 🙂"
+  ];
+
+  setTimeout(() => {
+    const prizeIndex = Math.floo
