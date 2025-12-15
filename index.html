@@ -28,6 +28,11 @@ input {
   width: 260px;
   border-radius: 6px;
   border: none;
+  outline: none;
+}
+
+input:focus {
+  box-shadow: 0 0 5px #22c55e;
 }
 
 button {
@@ -37,11 +42,11 @@ button {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-button:disabled {
-  background: gray;
-  cursor: not-allowed;
+button:hover {
+  background: #16a34a;
 }
 
 .wheel-container {
@@ -49,7 +54,7 @@ button:disabled {
   width: 260px;
   height: 260px;
   margin: 30px auto;
-  padding-bottom: 10px; /* Optional visual adjustment */
+  padding-bottom: 10px;
 }
 
 .wheel {
@@ -64,6 +69,7 @@ button:disabled {
     #3b82f6 216deg 288deg,
     #a855f7 288deg 360deg
   );
+  transition: transform 4s ease-out;
 }
 
 .pointer {
@@ -87,7 +93,7 @@ button:disabled {
 
 <body>
 
-<h1>🎡 Balaji Gaming Lucky Draw Game</h1>
+<h1>Balaji Gaming Lucky Draw Game</h1>
 
 <div class="container">
   <input id="name" placeholder="Enter your name">
@@ -106,9 +112,16 @@ button:disabled {
 </div>
 
 <script>
-const spinBtn = document.getElementById("spinBtn");
 const wheel = document.getElementById("wheel");
 const resultDiv = document.getElementById("result");
+
+const prizes = [
+  "Prize 1 🎁",
+  "Prize 2 🎉",
+  "Prize 3 🎊",
+  "Prize 4 🏆",
+  "Better Luck Next Time 🙂"
+];
 
 function spinWheel() {
   const name = document.getElementById("name").value.trim();
@@ -124,30 +137,24 @@ function spinWheel() {
     return;
   }
 
-  // RESET ROTATION
+  // Reset rotation
   wheel.style.transition = "none";
   wheel.style.transform = "rotate(0deg)";
   wheel.offsetHeight; // force reflow
 
-  // SPIN WHEEL
-  const spinDegree = 3600 + Math.floor(Math.random() * 360);
+  const sectorDeg = 360 / prizes.length;
+
+  // Pick random sector for more precise alignment
+  const randomSector = Math.floor(Math.random() * prizes.length);
+  const spinDegree = 3600 + randomSector * sectorDeg + Math.floor(sectorDeg / 2); // center of sector
   wheel.style.transition = "transform 4s ease-out";
   wheel.style.transform = `rotate(${spinDegree}deg)`;
 
-  // PRIZES
-  const prizes = [
-    "Prize 1 🎁",
-    "Prize 2 🎉",
-    "Prize 3 🎊",
-    "Prize 4 🏆",
-    "Better Luck Next Time 🙂"
-  ];
-
   setTimeout(() => {
-    // Correct calculation for bottom pointer
-    const actualDeg = (spinDegree + 180) % 360;
-    const index = Math.floor(actualDeg / 72);
-    const prize = prizes[4 - index];
+    // Calculate the prize based on pointer at bottom
+    const actualDeg = (spinDegree + 180) % 360; 
+    const index = Math.floor(actualDeg / sectorDeg) % prizes.length;
+    const prize = prizes[prizes.length - 1 - index];
 
     resultDiv.innerText = `${name}, you got: ${prize}`;
   }, 4000);
