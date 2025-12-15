@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Balaji Gaming Lucky Draw Game</title>
-
 <style>
 body {
   margin: 0;
@@ -12,7 +11,6 @@ body {
   background: radial-gradient(circle, #020617, #020617);
   color: #fff;
   text-align: center;
-  overflow-x: hidden;
 }
 
 h1 {
@@ -20,7 +18,7 @@ h1 {
 }
 
 .container {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 input {
@@ -30,10 +28,6 @@ input {
   border-radius: 6px;
   border: none;
   outline: none;
-}
-
-input:focus {
-  box-shadow: 0 0 5px #22c55e;
 }
 
 button {
@@ -52,37 +46,22 @@ button:hover {
 
 .wheel-container {
   position: relative;
-  width: 260px;
-  height: 260px;
+  width: 320px;
+  height: 320px;
   margin: 30px auto;
-  padding-bottom: 10px;
-}
-
-.wheel {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  background: conic-gradient(
-    #ef4444 0deg 72deg,
-    #f59e0b 72deg 144deg,
-    #22c55e 144deg 216deg,
-    #3b82f6 216deg 288deg,
-    #a855f7 288deg 360deg
-  );
-  transition: transform 4s ease-out;
 }
 
 .pointer {
   position: absolute;
-  bottom: -14px;
+  top: -10px;
   left: 50%;
-  transform: translateX(-50%) rotate(90deg);
+  transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 20px solid white;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 25px solid white;
+  z-index: 10;
 }
 
 #result {
@@ -90,7 +69,6 @@ button:hover {
   font-size: 18px;
 }
 
-/* Canvas for confetti */
 #confettiCanvas {
   position: fixed;
   top: 0;
@@ -102,7 +80,6 @@ button:hover {
 }
 </style>
 </head>
-
 <body>
 
 <h1> 🎡 Balaji Gaming Lucky Draw Game</h1>
@@ -115,10 +92,10 @@ button:hover {
 
   <div class="wheel-container">
     <div class="pointer"></div>
-    <div class="wheel" id="wheel"></div>
+    <canvas id="wheel" width="320" height="320"></canvas>
   </div>
 
-  <button id="spinBtn" onclick="spinWheel()">SPIN</button>
+  <button onclick="spinWheel()">SPIN</button>
 
   <div id="result"></div>
 </div>
@@ -126,110 +103,124 @@ button:hover {
 <canvas id="confettiCanvas"></canvas>
 
 <script>
-const wheel = document.getElementById("wheel");
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
 const resultDiv = document.getElementById("result");
 const confettiCanvas = document.getElementById("confettiCanvas");
-const ctx = confettiCanvas.getContext("2d");
+const confettiCtx = confettiCanvas.getContext("2d");
 
 confettiCanvas.width = window.innerWidth;
 confettiCanvas.height = window.innerHeight;
 
-const prizes = [
-  "Prize 1 🎁",
-  "Prize 2 🎉",
-  "Prize 3 🎊",
-  "Prize 4 🏆",
-  "Better Luck Next Time 🙂"
-];
+const prizes = ["$100","$200","$300","$400","$500","$600","$700","$800","$900","$1000"];
+const colors = ["#ff5e5e","#ffbe5e","#5eff5e","#5edfff","#5e5eff","#be5eff","#ff5ebc","#ffd35e","#5effc1","#5e9eff"];
+let startAngle = 0;
 
-function spinWheel() {
+function drawWheel() {
+  const num = prizes.length;
+  const arc = 2 * Math.PI / num;
+  const radius = canvas.width / 2;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(let i=0;i<num;i++){
+    const angle = startAngle + i*arc;
+
+    // Draw segment
+    ctx.beginPath();
+    ctx.moveTo(radius,radius);
+    ctx.arc(radius,radius,radius,angle,angle+arc);
+    ctx.fillStyle = colors[i%colors.length];
+    ctx.fill();
+    ctx.strokeStyle="#fff";
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    // Draw prize text
+    ctx.save();
+    ctx.translate(radius,radius);
+    ctx.rotate(angle+arc/2);
+    ctx.textAlign="right";
+    ctx.fillStyle="#fff";
+    ctx.font="bold 16px Arial";
+    ctx.fillText(prizes[i], radius-10, 0);
+    ctx.restore();
+  }
+}
+
+drawWheel();
+
+function spinWheel(){
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
+  if(!name){ alert("Enter your name"); return; }
+  if(!/^[6-9]\d{9}$/.test(phone)){ alert("Enter valid 10-digit phone number"); return; }
 
-  if (!name) {
-    alert("Enter your name");
-    return;
-  }
+  const num = prizes.length;
+  const arcDeg = 360/num;
+  const randomIndex = Math.floor(Math.random()*num);
+  const spins = 3600 + randomIndex*arcDeg + arcDeg/2;
+  const rotation = spins*Math.PI/180;
+  const duration = 4000;
+  const start = performance.now();
+  const initial = startAngle;
 
-  if (!/^[6-9]\d{9}$/.test(phone)) {
-    alert("Enter valid 10-digit Indian phone number");
-    return;
-  }
-
-  // Reset rotation
-  wheel.style.transition = "none";
-  wheel.style.transform = "rotate(0deg)";
-  wheel.offsetHeight; // force reflow
-
-  const sectorDeg = 360 / prizes.length;
-
-  // Pick random sector for precise alignment
-  const randomSector = Math.floor(Math.random() * prizes.length);
-  const spinDegree = 3600 + randomSector * sectorDeg + Math.floor(sectorDeg / 2);
-  wheel.style.transition = "transform 4s ease-out";
-  wheel.style.transform = `rotate(${spinDegree}deg)`;
-
-  setTimeout(() => {
-    const actualDeg = (spinDegree + 180) % 360; 
-    const index = Math.floor(actualDeg / sectorDeg) % prizes.length;
-    const prize = prizes[prizes.length - 1 - index];
-
-    resultDiv.innerText = `${name}, you got: ${prize}`;
-    
-    // Trigger confetti for non "Better Luck" prizes
-    if (prize !== "Better Luck Next Time 🙂") {
+  function animate(time){
+    const elapsed = time-start;
+    const progress = Math.min(elapsed/duration,1);
+    const ease = 1 - Math.pow(1-progress,3);
+    startAngle = initial + rotation*ease;
+    drawWheel();
+    if(progress<1) requestAnimationFrame(animate);
+    else{
+      const index = (num - 1 - randomIndex + num)%num;
+      const prize = prizes[index];
+      resultDiv.innerText = `${name}, you got: ${prize}`;
       launchConfetti();
     }
-  }, 4000);
+  }
+  requestAnimationFrame(animate);
 }
 
-// --- Confetti Effect ---
+// Confetti
 function launchConfetti() {
-  const confetti = [];
-  const colors = ["#ff0a54","#ff477e","#ff7096","#ff85a1","#fbb1b1","#f9bec7","#f7cad0"];
-
-  for (let i = 0; i < 100; i++) {
+  const confetti=[];
+  const colors=["#ff0a54","#ff477e","#ff7096","#ff85a1","#fbb1b1","#f9bec7","#f7cad0"];
+  for(let i=0;i<150;i++){
     confetti.push({
-      x: Math.random() * confettiCanvas.width,
-      y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-      r: Math.random() * 6 + 4,
-      d: Math.random() * 100,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      tilt: Math.random() * 10 - 10,
-      tiltAngleIncrement: Math.random() * 0.07 + 0.05,
-      tiltAngle: 0
+      x: Math.random()*confettiCanvas.width,
+      y: Math.random()*-confettiCanvas.height,
+      r: Math.random()*6+4,
+      d: Math.random()*100,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      tilt: Math.random()*10-10,
+      tiltAngleIncrement: Math.random()*0.07+0.05,
+      tiltAngle:0,
+      speed: Math.random()*3+2
     });
   }
 
-  let animationFrame;
-  function drawConfetti() {
-    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-    confetti.forEach(c => {
-      ctx.beginPath();
-      ctx.lineWidth = c.r / 2;
-      ctx.strokeStyle = c.color;
-      ctx.moveTo(c.x + c.tilt + c.r / 4, c.y);
-      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
-      ctx.stroke();
-      c.tiltAngle += c.tiltAngleIncrement;
-      c.y += (Math.cos(c.d) + 3 + c.r/2) / 2;
-      c.x += Math.sin(c.d);
-      c.tilt = Math.sin(c.tiltAngle) * 15;
-      if (c.y > confettiCanvas.height) {
-        c.y = -10;
-        c.x = Math.random() * confettiCanvas.width;
-      }
-    });
-    animationFrame = requestAnimationFrame(drawConfetti);
+  function draw(){
+    confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    for(let i=0;i<confetti.length;i++){
+      const c=confetti[i];
+      confettiCtx.beginPath();
+      confettiCtx.lineWidth=c.r/2;
+      confettiCtx.strokeStyle=c.color;
+      confettiCtx.moveTo(c.x+c.tilt+c.r/4,c.y);
+      confettiCtx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2);
+      confettiCtx.stroke();
+      c.tiltAngle+=c.tiltAngleIncrement;
+      c.y+=c.speed;
+      c.x+=Math.sin(c.tiltAngle)*2;
+      c.tilt=Math.sin(c.tiltAngle)*15;
+      if(c.y>confettiCanvas.height){ confetti.splice(i,1); i--; }
+    }
+    if(confetti.length>0) requestAnimationFrame(draw);
   }
-
-  drawConfetti();
-  // Stop confetti after 3 seconds
-  setTimeout(() => cancelAnimationFrame(animationFrame), 3000);
+  draw();
 }
 
-// Adjust canvas size on window resize
-window.addEventListener('resize', () => {
+window.addEventListener('resize',()=>{
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
 });
