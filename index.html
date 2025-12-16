@@ -12,44 +12,85 @@ body {
   background: radial-gradient(circle, #020617, #020617);
   color: #fff;
   text-align: center;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-/* Website logo */
-.site-logo {
-  margin-top: 20px;
-  width: 120px;
-}
-
-/* Heading */
 h1 {
-  margin: 10px 0;
+  margin-top: 20px;
 }
 
-/* Inputs */
+/* ================= FLOATING CHIPS ================= */
+
+.floating-chips {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.chip {
+  position: absolute;
+  top: -20%;
+  animation: floatDown linear infinite;
+}
+
+.chip.middle {
+  filter: blur(0);
+  opacity: 1;
+  box-shadow:
+    0 0 10px rgba(255,215,0,.5),
+    0 0 20px rgba(255,215,0,.3);
+}
+
+.chip.top {
+  filter: blur(3px);
+  opacity: .35;
+  transform: scale(.85);
+}
+
+.chip.bottom {
+  filter: blur(2px);
+  opacity: .55;
+  transform: scale(1.15);
+}
+
+@keyframes floatDown {
+  from { transform: translateY(-20vh) rotate(0deg); }
+  to { transform: translateY(120vh) rotate(360deg); }
+}
+
+/* ================= LAYOUT ================= */
+
+.container {
+  position: relative;
+  z-index: 5;
+  margin-top: 20px;
+}
+
 input {
   padding: 10px;
   margin: 8px;
   width: 260px;
   border-radius: 6px;
   border: none;
-  outline: none;
 }
 
-/* Button */
 button {
-  padding: 12px 25px;
+  padding: 12px 28px;
   background: #22c55e;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
 }
+
 button:hover {
   background: #16a34a;
 }
 
-/* Wheel container */
+/* ================= WHEEL ================= */
+
 .wheel-container {
   position: relative;
   width: 320px;
@@ -57,70 +98,61 @@ button:hover {
   margin: 30px auto;
 }
 
-/* Pointer (TOP) */
 .pointer {
   position: absolute;
   top: -12px;
   left: 50%;
-  transform: translateX(-50%) rotate(180deg);
+  transform: translateX(-50%) rotate(90deg);
   width: 0;
   height: 0;
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-bottom: 26px solid white;
-  z-index: 20;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 25px solid white;
+  z-index: 10;
 }
 
-/* Wheel canvas */
-#wheel {
-  border-radius: 50%;
-  border: 6px solid #fff;
-}
-
-/* Center hub using website logo */
-.hub {
+.center-logo {
   position: absolute;
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle, #fde68a, #facc15);
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
+  background: #020617;
+  border: 4px solid #fff;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 12px rgba(255,215,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 15;
+  z-index: 6;
 }
 
-.hub img {
-  width: 65%;
-  height: 65%;
-  object-fit: contain;
+.center-logo img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
-/* Result */
 #result {
   margin-top: 20px;
   font-size: 18px;
 }
 
-/* Confetti canvas */
+/* ================= CONFETTI ================= */
+
 #confettiCanvas {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 20;
 }
 </style>
 </head>
 
 <body>
 
-<img src="logo.png" class="site-logo" alt="Balaji Gaming Logo">
+<div class="floating-chips"></div>
 
-<h1>🎡 Balaji Gaming Lucky Draw Game</h1>
+<h1>Balaji Gaming Lucky Draw Game</h1>
+
+<div class="container">
 
 <input id="name" placeholder="Enter your game ID"><br>
 <input id="phone" placeholder="Enter 10-digit phone number"><br>
@@ -128,39 +160,63 @@ button:hover {
 <div class="wheel-container">
   <div class="pointer"></div>
   <canvas id="wheel" width="320" height="320"></canvas>
-  <div class="hub">
-    <img src="logo.png" alt="Balaji Gaming">
+  <div class="center-logo">
+    <img src="images/logo.png">
   </div>
 </div>
 
 <button onclick="spinWheel()">SPIN</button>
-
 <div id="result"></div>
+
+</div>
 
 <canvas id="confettiCanvas"></canvas>
 
 <script>
-/* ---------- WHEEL ---------- */
+/* ================= FLOATING CHIPS ================= */
+
+const chipContainer = document.querySelector(".floating-chips");
+const CHIP_SRC = "images/poker-chip.png";
+
+const depths = [
+  "top","top","top",
+  "middle","middle","middle",
+  "bottom","bottom","bottom"
+];
+
+depths.forEach((depth,i)=>{
+  const chip=document.createElement("img");
+  chip.src=CHIP_SRC;
+  chip.className=`chip ${depth}`;
+  chip.style.width = depth==="middle"? "46px" : depth==="bottom"? "54px":"36px";
+  chip.style.left = `${(i+1)*(window.innerWidth/10)}px`;
+  chip.style.animationDuration = `${18+Math.random()*10}s`;
+  chip.style.animationDelay = `${Math.random()*6}s`;
+  chipContainer.appendChild(chip);
+});
+
+/* ================= WHEEL ================= */
+
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
+const resultDiv = document.getElementById("result");
 
 const prizes = ["₹100","₹200","₹300","₹400","₹500"];
-const colors = ["#ef4444","#f59e0b","#22c55e","#3b82f6","#a855f7"];
-const total = prizes.length;
-const arc = (2 * Math.PI) / total;
-let startAngle = 0;
+const colors = ["#f59e0b","#ef4444","#22c55e","#3b82f6","#a855f7"];
+let angle = 0;
 
-function drawWheel() {
-  const r = canvas.width / 2;
+function drawWheel(){
+  const num=prizes.length;
+  const arc=2*Math.PI/num;
+  const r=canvas.width/2;
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  for(let i=0;i<total;i++){
-    const angle = startAngle + i * arc;
-
+  for(let i=0;i<num;i++){
+    const a=angle+i*arc;
     ctx.beginPath();
     ctx.moveTo(r,r);
-    ctx.arc(r,r,r,angle,angle+arc);
-    ctx.fillStyle = colors[i];
+    ctx.arc(r,r,r,a,a+arc);
+    ctx.fillStyle=colors[i];
     ctx.fill();
     ctx.strokeStyle="#fff";
     ctx.lineWidth=2;
@@ -168,95 +224,81 @@ function drawWheel() {
 
     ctx.save();
     ctx.translate(r,r);
-    ctx.rotate(angle + arc/2);
+    ctx.rotate(a+arc/2);
     ctx.textAlign="right";
     ctx.fillStyle="#fff";
     ctx.font="bold 18px Arial";
-    ctx.fillText(prizes[i], r-20, 6);
+    ctx.fillText(prizes[i], r-14,6);
     ctx.restore();
   }
 }
+
 drawWheel();
 
-/* ---------- SPIN ---------- */
 function spinWheel(){
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  if(!name) return alert("Enter your name");
-  if(!/^[6-9]\d{9}$/.test(phone)) return alert("Enter valid phone number");
+  const name=nameInput.value.trim();
+  const phone=phoneInput.value.trim();
+  if(!name || !/^[6-9]\d{9}$/.test(phone)){
+    alert("Enter valid name & phone");
+    return;
+  }
 
-  const index = Math.floor(Math.random() * total);
-  const spins = 3600 + (total - index) * (360 / total) - (360 / total) / 2;
-  const rotation = spins * Math.PI / 180;
-
-  const start = performance.now();
-  const duration = 4000;
-  const initial = startAngle;
+  const num=prizes.length;
+  const arc=360/num;
+  const win=Math.floor(Math.random()*num);
+  const target=3600+win*arc+arc/2;
+  const start=performance.now();
+  const dur=4000;
+  const init=angle;
 
   function animate(t){
-    const p = Math.min((t - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    startAngle = initial + rotation * ease;
+    const p=Math.min((t-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    angle=init+(target*Math.PI/180)*ease;
     drawWheel();
-    if(p < 1) requestAnimationFrame(animate);
-    else {
-      document.getElementById("result").innerText =
-        `${name}, you won ${prizes[index]} 🎉`;
+    if(p<1) requestAnimationFrame(animate);
+    else{
+      resultDiv.innerText=`${name}, you won ${prizes[(num-win-1)%num]}`;
       launchConfetti();
     }
   }
   requestAnimationFrame(animate);
 }
 
-/* ---------- CONFETTI (YOUR PREFERRED VERSION) ---------- */
-const confettiCanvas = document.getElementById("confettiCanvas");
-const confettiCtx = confettiCanvas.getContext("2d");
-confettiCanvas.width = innerWidth;
-confettiCanvas.height = innerHeight;
+/* ================= CONFETTI ================= */
 
-function launchConfetti() {
-  const confetti=[];
-  const colors=["#ff0a54","#ff477e","#ff7096","#ff85a1","#fbb1b1","#f9bec7","#f7cad0"];
+const confettiCanvas=document.getElementById("confettiCanvas");
+const cctx=confettiCanvas.getContext("2d");
+confettiCanvas.width=innerWidth;
+confettiCanvas.height=innerHeight;
 
+function launchConfetti(){
+  const conf=[];
   for(let i=0;i<150;i++){
-    confetti.push({
-      x: Math.random()*confettiCanvas.width,
-      y: Math.random()*-confettiCanvas.height,
-      r: Math.random()*6+4,
-      d: Math.random()*100,
-      color: colors[Math.floor(Math.random()*colors.length)],
-      tilt: Math.random()*10-10,
-      tiltAngleIncrement: Math.random()*0.07+0.05,
-      tiltAngle:0,
-      speed: Math.random()*3+2
+    conf.push({
+      x:Math.random()*confettiCanvas.width,
+      y:Math.random()*-confettiCanvas.height,
+      r:Math.random()*6+4,
+      s:Math.random()*3+2,
+      c:["#ff0a54","#ff477e","#ff85a1","#fbb1b1"][Math.floor(Math.random()*4)]
     });
   }
-
   function draw(){
-    confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-    for(let i=0;i<confetti.length;i++){
-      const c=confetti[i];
-      confettiCtx.beginPath();
-      confettiCtx.lineWidth=c.r/2;
-      confettiCtx.strokeStyle=c.color;
-      confettiCtx.moveTo(c.x+c.tilt+c.r/4,c.y);
-      confettiCtx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2);
-      confettiCtx.stroke();
-      c.tiltAngle+=c.tiltAngleIncrement;
-      c.y+=c.speed;
-      c.x+=Math.sin(c.tiltAngle)*2;
-      c.tilt=Math.sin(c.tiltAngle)*15;
-      if(c.y>confettiCanvas.height){ confetti.splice(i,1); i--; }
-    }
-    if(confetti.length>0) requestAnimationFrame(draw);
+    cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    conf.forEach((p,i)=>{
+      cctx.strokeStyle=p.c;
+      cctx.lineWidth=p.r/2;
+      cctx.beginPath();
+      cctx.moveTo(p.x,p.y);
+      cctx.lineTo(p.x,p.y+p.r);
+      cctx.stroke();
+      p.y+=p.s;
+      if(p.y>confettiCanvas.height) conf.splice(i,1);
+    });
+    if(conf.length) requestAnimationFrame(draw);
   }
   draw();
 }
-
-window.onresize = () => {
-  confettiCanvas.width = innerWidth;
-  confettiCanvas.height = innerHeight;
-};
 </script>
 
 </body>
