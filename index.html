@@ -21,6 +21,32 @@ body {
   width: 120px;
 }
 
+/* ================= PROMO RIBBON ================= */
+
+.promo-ribbon {
+  width: 100%;
+  overflow: hidden;
+  margin: 12px 0 6px;
+  background: linear-gradient(90deg, #f59e0b, #facc15, #f59e0b);
+  border-top: 1px solid rgba(255,255,255,0.4);
+  border-bottom: 1px solid rgba(255,255,255,0.4);
+}
+
+.ribbon-track {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #020617;
+  animation: ribbonScroll 18s linear infinite;
+}
+
+@keyframes ribbonScroll {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-100%); }
+}
+
 /* Heading */
 h1 {
   margin: 10px 0;
@@ -57,7 +83,7 @@ button:hover {
   margin: 30px auto;
 }
 
-/* Pointer (TOP) */
+/* Pointer */
 .pointer {
   position: absolute;
   top: -12px;
@@ -77,7 +103,7 @@ button:hover {
   border: 6px solid #fff;
 }
 
-/* Center hub using website logo */
+/* Center hub */
 .hub {
   position: absolute;
   width: 80px;
@@ -106,7 +132,7 @@ button:hover {
   font-size: 18px;
 }
 
-/* Confetti canvas */
+/* Confetti */
 #confettiCanvas {
   position: fixed;
   inset: 0;
@@ -119,6 +145,13 @@ button:hover {
 <body>
 
 <img src="logo.png" class="site-logo" alt="Balaji Gaming Logo">
+
+<!-- 🔥 PROMO RIBBON -->
+<div class="promo-ribbon">
+  <div class="ribbon-track">
+    • 24×7 Customer Support • Fast Deposit & Withdrawal • Christmas Offers Live • Daily Offers • Christmas Offers Live
+  </div>
+</div>
 
 <h1>🎡 Balaji Gaming Lucky Draw Game</h1>
 
@@ -134,7 +167,6 @@ button:hover {
 </div>
 
 <button onclick="spinWheel()">SPIN</button>
-
 <div id="result"></div>
 
 <canvas id="confettiCanvas"></canvas>
@@ -182,7 +214,7 @@ drawWheel();
 function spinWheel(){
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
-  if(!name) return alert("Enter your name");
+  if(!name) return alert("Enter your game ID");
   if(!/^[6-9]\d{9}$/.test(phone)) return alert("Enter valid phone number");
 
   const index = Math.floor(Math.random() * total);
@@ -208,7 +240,7 @@ function spinWheel(){
   requestAnimationFrame(animate);
 }
 
-/* ---------- CONFETTI (YOUR PREFERRED VERSION) ---------- */
+/* ---------- CONFETTI ---------- */
 const confettiCanvas = document.getElementById("confettiCanvas");
 const confettiCtx = confettiCanvas.getContext("2d");
 confettiCanvas.width = innerWidth;
