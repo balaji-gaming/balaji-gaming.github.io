@@ -237,23 +237,24 @@ drawWheel();
 function sendToGoogleSheet(gameId, phone, prize) {
   const now = new Date();
 
-const date = now.toLocaleDateString("en-GB");
-
   const hours12 = now.getHours() % 12 || 12;
   const minutes = now.getMinutes().toString().padStart(2, "0");
   const ampm = now.getHours() >= 12 ? "PM" : "AM";
-  const time = `${hours12}:${minutes} ${ampm}`;
 
-  const params = new URLSearchParams({
-    gameId: gameId,
-    phone: phone,
-    prize: prize,
-    date: date,
-    time: time
-  });
+  const params =
+    "gameId=" + encodeURIComponent(gameId) +
+    "&phone=" + encodeURIComponent(phone) +
+    "&prize=" + encodeURIComponent(prize) +
+    "&date=" + encodeURIComponent(now.toLocaleDateString("en-GB")) +
+    "&time=" + encodeURIComponent(`${hours12}:${minutes} ${ampm}`);
 
-  const img = new Image();
-  img.src = "https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec?" + params.toString();
+  const img = document.createElement("img");
+  img.src =
+    "https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec?" +
+    params;
+
+  img.style.display = "none";
+  document.body.appendChild(img);
 }
 
 /* SPIN */
