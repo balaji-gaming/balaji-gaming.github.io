@@ -234,17 +234,29 @@ function drawWheel(){
 drawWheel();
 
 /* GOOGLE SHEET */
-function sendToGoogleSheet(id,phone,prize){
-  const now=new Date();
-  fetch("https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec",{
-    method:"POST",
-    body:JSON.stringify({
-      date:now.toLocaleDateString("en-GB"),
-      gameId:id,
-      phone:phone,
-      prize:prize,
-      time:now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",second:"2-digit",hour12:true})
+function sendToGoogleSheet(gameId, phone, prize) {
+  const now = new Date();
+
+  const data = {
+    date: now.toLocaleDateString("en-GB"),
+    gameId: gameId,
+    phone: phone,
+    prize: prize,
+    time: now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
     })
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec", {
+    method: "POST",
+    mode: "no-cors",   // 🔥 THIS IS THE KEY
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
   });
 }
 
