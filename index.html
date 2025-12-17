@@ -282,6 +282,7 @@ function spinWheel(){
       document.getElementById("mprize").innerText=prizes[prizeIndex];
       document.getElementById("modal").classList.add("active");
       sendToGoogleSheet(name,phone,prizes[prizeIndex]);
+      alert("Sending to sheet");
       launchConfetti();
     }
   }
