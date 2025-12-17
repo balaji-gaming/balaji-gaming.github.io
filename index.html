@@ -280,17 +280,38 @@ confettiCanvas.height=innerHeight;
 
 function launchConfetti(){
   const pieces=[];
-  const cols=["#ffd60a","#ffbe0b","#fb8500","#ff006e"];
-  for(let i=0;i<140;i++)
-    pieces.push({x:Math.random()*innerWidth,y:Math.random()*-innerHeight,r:6,s:3,c:cols[Math.random()*cols.length|0]});
+  const colors=["#ffd60a","#ffbe0b","#fb8500","#ff006e","#facc15"];
+
+  for(let i=0;i<160;i++){
+    pieces.push({
+      x: Math.random() * innerWidth,
+      y: Math.random() * -innerHeight,
+      w: Math.random() * 6 + 4,   // stripe width
+      h: Math.random() * 14 + 10, // stripe height
+      speed: Math.random() * 3 + 2,
+      angle: Math.random() * 360,
+      rotation: Math.random() * 6 - 3,
+      color: colors[Math.floor(Math.random()*colors.length)]
+    });
+  }
+
   (function draw(){
     cctx.clearRect(0,0,innerWidth,innerHeight);
+
     pieces.forEach((p,i)=>{
-      cctx.fillStyle=p.c;
-      cctx.fillRect(p.x,p.y,p.r,p.r);
-      p.y+=p.s;
-      if(p.y>innerHeight) pieces.splice(i,1);
+      cctx.save();
+      cctx.translate(p.x, p.y);
+      cctx.rotate(p.angle * Math.PI / 180);
+      cctx.fillStyle = p.color;
+      cctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      cctx.restore();
+
+      p.y += p.speed;
+      p.angle += p.rotation;
+
+      if(p.y > innerHeight) pieces.splice(i,1);
     });
+
     if(pieces.length) requestAnimationFrame(draw);
   })();
 }
