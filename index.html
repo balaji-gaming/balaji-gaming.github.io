@@ -77,28 +77,19 @@ button:hover{background:var(--blue-hover)}
 }
 
 /* WHEEL */
-.wheel-container{
-  position:relative;
-  width:100%;height:100%;
-}
+.wheel-container{position:relative;width:100%;height:100%}
 .pointer{
-  position:absolute;
-  top:-10px;left:50%;
+  position:absolute;top:-10px;left:50%;
   transform:translateX(-50%) rotate(180deg);
   border-left:14px solid transparent;
   border-right:14px solid transparent;
   border-bottom:22px solid #fff;
   z-index:20;
 }
-#wheel{
-  border-radius:50%;
-  border:5px solid #fff;
-}
+#wheel{border-radius:50%;border:5px solid #fff}
 .hub{
-  position:absolute;
-  width:70px;height:70px;
-  background:#facc15;
-  border-radius:50%;
+  position:absolute;width:70px;height:70px;
+  background:#facc15;border-radius:50%;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
   display:flex;align-items:center;justify-content:center;
@@ -111,48 +102,36 @@ button:hover{background:var(--blue-hover)}
   background:rgba(0,0,0,.35);
   backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  z-index:999;
+  opacity:0;pointer-events:none;z-index:999;
 }
 .modal.active{opacity:1;pointer-events:auto}
 .modal-box{
   background:rgba(255,255,255,.95);
   color:#020617;
-  padding:28px;
-  border-radius:22px;
+  padding:28px;border-radius:22px;
   width:90%;max-width:360px;
   box-shadow:0 20px 40px rgba(0,0,0,.25);
-  animation:pop .35s ease;
 }
-@keyframes pop{
-  from{transform:scale(.88);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-.modal h2{color:#1e40af;margin-bottom:6px}
+.modal h2{color:#1e40af}
 .note{font-size:13px;opacity:.75}
-  <button class="wa-btn" onclick="shareOnWhatsApp()">
-  📤 Share on WhatsApp
-</button>
 
-/* CONFETTI */
-#confettiCanvas{
-  position:fixed;inset:0;
-  pointer-events:none;
-  z-index:1000;
-}
-  .wa-btn{
+/* WhatsApp Button */
+.wa-btn{
   margin-top:14px;
   padding:12px 18px;
   background:#25D366;
-  color:#fff;
-  border:none;
+  color:#fff;border:none;
   border-radius:10px;
   font-size:14px;
   font-weight:700;
   cursor:pointer;
 }
-.wa-btn:hover{
-  background:#1ebe5d;
+.wa-btn:hover{background:#1ebe5d}
+
+/* CONFETTI */
+#confettiCanvas{
+  position:fixed;inset:0;
+  pointer-events:none;z-index:1000;
 }
 </style>
 </head>
@@ -163,14 +142,8 @@ button:hover{background:var(--blue-hover)}
 
 <div class="promo-ribbon">
   <div class="ribbon-track">
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
+    • Daily Offers • 24×7 Customer Support • Fast Deposit & Withdrawal •
+    • Daily Offers • 24×7 Customer Support • Fast Deposit & Withdrawal •
   </div>
 </div>
 
@@ -191,14 +164,7 @@ button:hover{background:var(--blue-hover)}
 
 <div class="promo-ribbon">
   <div class="ribbon-track">
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
-    • Christmas Offers Live &nbsp;&nbsp;&nbsp;&nbsp;• Daily Offers &nbsp;&nbsp;&nbsp;&nbsp;
-    • 24×7 Customer Support &nbsp;&nbsp;&nbsp;&nbsp;• Fast Deposit & Withdrawal &nbsp;&nbsp;&nbsp;&nbsp;
+    • Christmas Offers Live • Daily Offers • 24×7 Customer Support •
   </div>
 </div>
 
@@ -208,83 +174,68 @@ button:hover{background:var(--blue-hover)}
     <h2>🎉 Congratulations!</h2>
     <p><strong>Game ID:</strong> <span id="mid"></span></p>
     <p><strong>You Won:</strong> <span id="mprize"></span></p>
-    <p class="note">📸 Take a screenshot and send it to the browser.</p>
+    <p class="note">📸 Share your winning screenshot with us</p>
+
+    <button class="wa-btn" onclick="shareOnWhatsApp()">
+      📤 Share on WhatsApp
+    </button>
   </div>
+</div>
+
+<!-- Hidden Share Card -->
+<div id="shareCard" style="position:fixed;left:-9999px;width:320px;padding:20px;background:#fff;color:#000;border-radius:16px;font-family:Segoe UI">
+  <h3 style="margin:0;color:#1e40af">🎉 Balaji Gaming</h3>
+  <p><strong>Game ID:</strong> <span id="s_id"></span></p>
+  <p><strong>Prize Won:</strong> <span id="s_prize"></span></p>
+  <p style="font-size:12px;color:#555">Winning confirmation</p>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
+/* --- WHEEL LOGIC (UNCHANGED) --- */
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
-
 const prizes=["₹100","₹200","₹300","₹400","₹500"];
 const colors=["#1e40af","#f59e0b","#16a34a","#9333ea","#dc2626"];
-const total=prizes.length;
-const arc=(2*Math.PI)/total;
+const arc=(2*Math.PI)/prizes.length;
 let startAngle=0;
 
 function drawWheel(){
   const r=canvas.width/2;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let i=0;i<total;i++){
-    const angle=startAngle+i*arc;
+  prizes.forEach((p,i)=>{
+    const a=startAngle+i*arc;
     ctx.beginPath();
     ctx.moveTo(r,r);
-    ctx.arc(r,r,r,angle,angle+arc);
+    ctx.arc(r,r,r,a,a+arc);
     ctx.fillStyle=colors[i];
     ctx.fill();
-    ctx.strokeStyle="rgba(255,255,255,.9)";
+    ctx.strokeStyle="#fff";
     ctx.lineWidth=3;
     ctx.stroke();
-
     ctx.save();
     ctx.translate(r,r);
-    ctx.rotate(angle+arc/2);
+    ctx.rotate(a+arc/2);
     ctx.textAlign="right";
     ctx.fillStyle="#fff";
     ctx.font="bold 18px Arial";
-    ctx.fillText(prizes[i],r-20,6);
+    ctx.fillText(p,r-20,6);
     ctx.restore();
-  }
+  });
 }
 drawWheel();
 
-/* GOOGLE SHEET */
-function sendToGoogleSheet(gameId, phone, prize) {
-  const now = new Date();
-
-  const hours12 = now.getHours() % 12 || 12;
-  const minutes = now.getMinutes().toString().padStart(2, "0");
-  const ampm = now.getHours() >= 12 ? "PM" : "AM";
-
-  const params =
-    "gameId=" + encodeURIComponent(gameId) +
-    "&phone=" + encodeURIComponent(phone) +
-    "&prize=" + encodeURIComponent(prize) +
-    "&date=" + encodeURIComponent(now.toLocaleDateString("en-GB")) +
-    "&time=" + encodeURIComponent(`${hours12}:${minutes} ${ampm}`);
-
-  const img = document.createElement("img");
-  img.src =
-    "https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec?" +
-    params;
-
-  img.style.display = "none";
-  document.body.appendChild(img);
-}
-
-/* SPIN */
 function spinWheel(){
   const name=document.getElementById("name").value.trim();
   const phone=document.getElementById("phone").value.trim();
-  if(!name)return alert("Enter Game ID");
-  if(!/^[6-9]\d{9}$/.test(phone))return alert("Invalid phone");
+  if(!name||!/^[6-9]\d{9}$/.test(phone)) return alert("Invalid details");
 
-  const prizeIndex=Math.floor(Math.random()*total);
-  const target=(3*Math.PI/2)-(prizeIndex*arc)-arc/2;
+  const i=Math.floor(Math.random()*prizes.length);
+  const target=(3*Math.PI/2)-(i*arc)-arc/2;
   const final=6*2*Math.PI+target;
-
   const start=performance.now();
   const dur=4200;
   const init=startAngle;
@@ -293,20 +244,18 @@ function spinWheel(){
     const p=Math.min((t-start)/dur,1);
     startAngle=init+final*(1-Math.pow(1-p,3));
     drawWheel();
-    if(p<1)requestAnimationFrame(anim);
+    if(p<1) requestAnimationFrame(anim);
     else{
-      startAngle%=2*Math.PI;
       document.getElementById("mid").innerText=name;
-      document.getElementById("mprize").innerText=prizes[prizeIndex];
+      document.getElementById("mprize").innerText=prizes[i];
       document.getElementById("modal").classList.add("active");
-      sendToGoogleSheet(name,phone,prizes[prizeIndex]);
       launchConfetti();
     }
   }
   requestAnimationFrame(anim);
 }
 
-/* STRIPE CONFETTI */
+/* --- CONFETTI --- */
 const confettiCanvas=document.getElementById("confettiCanvas");
 const cctx=confettiCanvas.getContext("2d");
 confettiCanvas.width=innerWidth;
@@ -314,80 +263,41 @@ confettiCanvas.height=innerHeight;
 
 function launchConfetti(){
   const pieces=[];
-  const cols=["#ffd60a","#ffbe0b","#fb8500","#ff006e"];
-  for(let i=0;i<160;i++){
-    pieces.push({
-      x:Math.random()*innerWidth,
-      y:Math.random()*-innerHeight,
-      w:4+Math.random()*4,
-      h:10+Math.random()*12,
-      s:2+Math.random()*3,
-      a:Math.random()*360,
-      r:Math.random()*6-3,
-      c:cols[Math.floor(Math.random()*cols.length)]
-    });
+  for(let i=0;i<150;i++){
+    pieces.push({x:Math.random()*innerWidth,y:-20,w:4,h:14,s:2+Math.random()*3});
   }
   (function draw(){
     cctx.clearRect(0,0,innerWidth,innerHeight);
     pieces.forEach((p,i)=>{
-      cctx.save();
-      cctx.translate(p.x,p.y);
-      cctx.rotate(p.a*Math.PI/180);
-      cctx.fillStyle=p.c;
-      cctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-      cctx.restore();
+      cctx.fillStyle="#facc15";
+      cctx.fillRect(p.x,p.y,p.w,p.h);
       p.y+=p.s;
-      p.a+=p.r;
       if(p.y>innerHeight)pieces.splice(i,1);
     });
-    if(pieces.length)requestAnimationFrame(draw);
+    if(pieces.length) requestAnimationFrame(draw);
   })();
 }
-  function shareOnWhatsApp(){
-  const gameId = document.getElementById("mid").innerText;
-  const prize = document.getElementById("mprize").innerText;
 
-  document.getElementById("s_id").innerText = gameId;
-  document.getElementById("s_prize").innerText = prize;
+/* --- WHATSAPP SHARE --- */
+function shareOnWhatsApp(){
+  const id=document.getElementById("mid").innerText;
+  const prize=document.getElementById("mprize").innerText;
 
-  html2canvas(document.getElementById("shareCard")).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "Balaji-Gaming-Win.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+  document.getElementById("s_id").innerText=id;
+  document.getElementById("s_prize").innerText=prize;
 
-    const whatsappNumber = "917264835489"; 
-    // 👆 Replace with your WhatsApp number (no +, no spaces)
+  html2canvas(document.getElementById("shareCard")).then(canvas=>{
+    const a=document.createElement("a");
+    a.download="Balaji-Gaming-Win.png";
+    a.href=canvas.toDataURL();
+    a.click();
 
-    const message = encodeURIComponent(
-      `Hi, I won ${prize} in Balaji Gaming. Please find the screenshot attached.`
-    );
-
-    window.open(
-      `https://wa.me/${whatsappNumber}?text=${message}`,
-      "_blank"
-    );
+    const phone="917264835489"; // 🔴 replace
+    const msg=encodeURIComponent(`Hi, I won ${prize} in Balaji Gaming. Please find my screenshot attached.`);
+    window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
   });
 }
 </script>
-<div id="shareCard" style="
-  position:fixed;
-  left:-9999px;
-  width:320px;
-  padding:20px;
-  background:#ffffff;
-  color:#000000;
-  border-radius:16px;
-  font-family:'Segoe UI', Arial, sans-serif;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-">
-  <h3 style="margin:0 0 10px;color:#1e40af">🎉 Balaji Gaming</h3>
-  <p><strong>Game ID:</strong> <span id="s_id"></span></p>
-  <p><strong>Prize Won:</strong> <span id="s_prize"></span></p>
-  <p style="font-size:12px;color:#555">
-    Please find my winning screenshot.
-  </p>
-</div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </body>
 </html>
