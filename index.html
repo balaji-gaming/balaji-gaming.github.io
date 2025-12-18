@@ -24,7 +24,7 @@ body{
 
 .site-logo{margin-top:12px;width:90px}
 
-/* RIBBON */
+/* RIBBONS */
 .promo-ribbon{
   width:100%;overflow:hidden;margin:14px 0;
   background:linear-gradient(90deg,#f59e0b,#fde68a,#f59e0b);
@@ -37,7 +37,6 @@ body{
 }
 @keyframes ribbonScroll{to{transform:translateX(-50%)}}
 
-/* HEADING */
 h1{margin:12px 0}
 
 /* INPUTS */
@@ -57,15 +56,13 @@ button{
 }
 button:hover{background:var(--blue-hover)}
 
-/* GRADIENT RING */
+/* WHEEL RING */
 .wheel-ring{
   position:relative;
   width:340px;height:340px;
   margin:30px auto;
   border-radius:50%;
-  background:conic-gradient(
-    #4285F4,#EA4335,#FBBC05,#34A853,#4285F4
-  );
+  background:conic-gradient(#4285F4,#EA4335,#FBBC05,#34A853,#4285F4);
   padding:6px;
 }
 .wheel-ring::before{
@@ -106,7 +103,7 @@ button:hover{background:var(--blue-hover)}
 }
 .modal.active{opacity:1;pointer-events:auto}
 .modal-box{
-  background:rgba(255,255,255,.95);
+  background:rgba(255,255,255,.96);
   color:#020617;
   padding:28px;border-radius:22px;
   width:90%;max-width:360px;
@@ -115,23 +112,25 @@ button:hover{background:var(--blue-hover)}
 .modal h2{color:#1e40af}
 .note{font-size:13px;opacity:.75}
 
-/* WhatsApp Button */
+/* WHATSAPP BUTTON */
 .wa-btn{
-  margin-top:14px;
-  padding:12px 18px;
+  margin-top:16px;
+  padding:14px 18px;
   background:#25D366;
   color:#fff;border:none;
-  border-radius:10px;
-  font-size:14px;
+  border-radius:12px;
+  font-size:15px;
   font-weight:700;
   cursor:pointer;
+  width:100%;
 }
 .wa-btn:hover{background:#1ebe5d}
 
 /* CONFETTI */
 #confettiCanvas{
   position:fixed;inset:0;
-  pointer-events:none;z-index:1000;
+  pointer-events:none;
+  z-index:2000;
 }
 </style>
 </head>
@@ -174,15 +173,12 @@ button:hover{background:var(--blue-hover)}
     <h2>🎉 Congratulations!</h2>
     <p><strong>Game ID:</strong> <span id="mid"></span></p>
     <p><strong>You Won:</strong> <span id="mprize"></span></p>
-    <p class="note">📸 Share your winning screenshot with us</p>
-
-    <button class="wa-btn" onclick="shareOnWhatsApp()">
-      📤 Share on WhatsApp
-    </button>
+    <p class="note">📸 Screenshot downloaded — please attach it in WhatsApp</p>
+    <button class="wa-btn" onclick="shareOnWhatsApp()">📤 Share on WhatsApp</button>
   </div>
 </div>
 
-<!-- Hidden Share Card -->
+<!-- SHARE CARD -->
 <div id="shareCard" style="position:fixed;left:-9999px;width:320px;padding:20px;background:#fff;color:#000;border-radius:16px;font-family:Segoe UI">
   <h3 style="margin:0;color:#1e40af">🎉 Balaji Gaming</h3>
   <p><strong>Game ID:</strong> <span id="s_id"></span></p>
@@ -195,7 +191,7 @@ button:hover{background:var(--blue-hover)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-/* --- WHEEL LOGIC (UNCHANGED) --- */
+/* WHEEL */
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const prizes=["₹100","₹200","₹300","₹400","₹500"];
@@ -228,6 +224,25 @@ function drawWheel(){
 }
 drawWheel();
 
+/* GOOGLE SHEET LOGGING */
+function sendToGoogleSheet(gameId, phone, prize){
+  const now=new Date();
+  const h=now.getHours()%12||12;
+  const m=now.getMinutes().toString().padStart(2,"0");
+  const ampm=now.getHours()>=12?"PM":"AM";
+
+  const params=
+    "gameId="+encodeURIComponent(gameId)+
+    "&phone="+encodeURIComponent(phone)+
+    "&prize="+encodeURIComponent(prize)+
+    "&date="+encodeURIComponent(now.toLocaleDateString("en-GB"))+
+    "&time="+encodeURIComponent(`${h}:${m} ${ampm}`);
+
+  const img=new Image();
+  img.src="https://script.google.com/macros/s/AKfycbwqQiMYi4V2weI--ahDJKPKXw6cOwRamUX7eHkjKc55uIFpfBBAM0F5DDI1GEGbqrSy/exec?"+params;
+}
+
+/* SPIN */
 function spinWheel(){
   const name=document.getElementById("name").value.trim();
   const phone=document.getElementById("phone").value.trim();
@@ -249,75 +264,72 @@ function spinWheel(){
       document.getElementById("mid").innerText=name;
       document.getElementById("mprize").innerText=prizes[i];
       document.getElementById("modal").classList.add("active");
+      sendToGoogleSheet(name,phone,prizes[i]);
       launchConfetti();
     }
   }
   requestAnimationFrame(anim);
 }
 
-/* --- CONFETTI --- */
-function launchConfetti(){
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
+/* CONFETTI */
+const confettiCanvas=document.getElementById("confettiCanvas");
+const cctx=confettiCanvas.getContext("2d");
 
-  const pieces = [];
-  const colors = [
-    "#facc15", "#ffd60a", "#ffbe0b",
-    "#fb8500", "#ff006e", "#3b82f6",
-    "#22c55e", "#a855f7"
-  ];
+function launchConfetti(){
+  confettiCanvas.width=innerWidth;
+  confettiCanvas.height=innerHeight;
+  const pieces=[];
+  const cols=["#facc15","#ffd60a","#ffbe0b","#fb8500","#ff006e","#3b82f6","#22c55e","#a855f7"];
 
   for(let i=0;i<180;i++){
     pieces.push({
-      x: Math.random() * confettiCanvas.width,
-      y: Math.random() * -confettiCanvas.height,
-      w: 4 + Math.random() * 3,
-      h: 16 + Math.random() * 14,   // longer strips
-      speed: 2 + Math.random() * 2,
-      angle: Math.random() * 360,
-      curve: Math.random() * 0.15 + 0.05,
-      tilt: Math.random() * 10,
-      color: colors[Math.floor(Math.random() * colors.length)]
+      x:Math.random()*confettiCanvas.width,
+      y:Math.random()*-confettiCanvas.height,
+      w:4+Math.random()*3,
+      h:16+Math.random()*14,
+      speed:2+Math.random()*2,
+      angle:Math.random()*360,
+      curve:Math.random()*0.15+0.05,
+      tilt:Math.random()*10,
+      c:cols[Math.floor(Math.random()*cols.length)]
     });
   }
 
   (function draw(){
     cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
-
     pieces.forEach((p,i)=>{
       cctx.save();
-      cctx.translate(p.x, p.y);
-      cctx.rotate(p.angle * Math.PI / 180);
-      cctx.fillStyle = p.color;
-      cctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      cctx.translate(p.x,p.y);
+      cctx.rotate(p.angle*Math.PI/180);
+      cctx.fillStyle=p.c;
+      cctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
       cctx.restore();
-
-      p.y += p.speed;
-      p.x += Math.sin(p.angle * Math.PI / 180) * 1.2;
-      p.angle += p.tilt * p.curve;
-
-      if(p.y > confettiCanvas.height) pieces.splice(i,1);
+      p.y+=p.speed;
+      p.x+=Math.sin(p.angle*Math.PI/180)*1.2;
+      p.angle+=p.tilt*p.curve;
+      if(p.y>confettiCanvas.height) pieces.splice(i,1);
     });
-
     if(pieces.length) requestAnimationFrame(draw);
   })();
 }
-/* --- WHATSAPP SHARE --- */
+
+/* WHATSAPP SHARE */
 function shareOnWhatsApp(){
   const id=document.getElementById("mid").innerText;
   const prize=document.getElementById("mprize").innerText;
-
   document.getElementById("s_id").innerText=id;
   document.getElementById("s_prize").innerText=prize;
 
   html2canvas(document.getElementById("shareCard")).then(canvas=>{
     const a=document.createElement("a");
     a.download="Balaji-Gaming-Win.png";
-    a.href=canvas.toDataURL();
+    a.href=canvas.toDataURL("image/png");
     a.click();
 
     const phone="917264835489"; // 🔴 replace
-    const msg=encodeURIComponent(`Hi, I won ${prize} in Balaji Gaming. Please find my screenshot attached.`);
+    const msg=encodeURIComponent(
+      `Hi, I won ${prize} in Balaji Gaming.\n\nScreenshot has been downloaded. Please attach it here 📎`
+    );
     window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
   });
 }
