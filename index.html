@@ -186,7 +186,7 @@ button:hover{background:var(--blue-hover)}
     <h2>🎉 Congratulations!</h2>
     <p><strong>Game ID:</strong> <span id="mid"></span></p>
     <p><strong>You Won:</strong> <span id="mprize"></span></p>
-    <p class="note">📸 Please take a screenshot of this result and share it on WhatsApp.</p>
+    <p class="note">Please take a screenshot of this result and share it on WhatsApp.</p>
     <button class="wa-btn" onclick="shareOnWhatsApp()">📤 Share on WhatsApp</button>
   </div>
 </div>
@@ -320,7 +320,7 @@ function launchConfetti(){
 /* WHATSAPP */
 function shareOnWhatsApp(){
   const prize=document.getElementById("mprize").innerText;
-  const phone="91XXXXXXXXXX"; // CHANGE THIS
+  const phone="917264835489"; // CHANGE THIS
   const msg=encodeURIComponent(
     `Hi, I won ${prize} in Balaji Gaming. I have taken a screenshot of my winning result.`
   );
