@@ -110,9 +110,9 @@ button:hover{background:var(--blue-hover)}
   box-shadow:0 20px 40px rgba(0,0,0,.25);
 }
 .modal h2{color:#1e40af}
-.note{font-size:13px;opacity:.75}
+.note{font-size:13px;opacity:.8}
 
-/* WHATSAPP BUTTON */
+/* WhatsApp Button */
 .wa-btn{
   margin-top:16px;
   padding:14px 18px;
@@ -173,22 +173,12 @@ button:hover{background:var(--blue-hover)}
     <h2>🎉 Congratulations!</h2>
     <p><strong>Game ID:</strong> <span id="mid"></span></p>
     <p><strong>You Won:</strong> <span id="mprize"></span></p>
-    <p class="note">📸 Screenshot downloaded — please attach it in WhatsApp</p>
+    <p class="note">📸 Please take a screenshot of this result and share it on WhatsApp.</p>
     <button class="wa-btn" onclick="shareOnWhatsApp()">📤 Share on WhatsApp</button>
   </div>
 </div>
 
-<!-- SHARE CARD -->
-<div id="shareCard" style="position:fixed;left:-9999px;width:320px;padding:20px;background:#fff;color:#000;border-radius:16px;font-family:Segoe UI">
-  <h3 style="margin:0;color:#1e40af">🎉 Balaji Gaming</h3>
-  <p><strong>Game ID:</strong> <span id="s_id"></span></p>
-  <p><strong>Prize Won:</strong> <span id="s_prize"></span></p>
-  <p style="font-size:12px;color:#555">Winning confirmation</p>
-</div>
-
 <canvas id="confettiCanvas"></canvas>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 /* WHEEL */
@@ -224,7 +214,7 @@ function drawWheel(){
 }
 drawWheel();
 
-/* GOOGLE SHEET LOGGING */
+/* GOOGLE SHEET */
 function sendToGoogleSheet(gameId, phone, prize){
   const now=new Date();
   const h=now.getHours()%12||12;
@@ -278,8 +268,9 @@ const cctx=confettiCanvas.getContext("2d");
 function launchConfetti(){
   confettiCanvas.width=innerWidth;
   confettiCanvas.height=innerHeight;
+
   const pieces=[];
-  const cols=["#facc15","#ffd60a","#ffbe0b","#fb8500","#ff006e","#3b82f6","#22c55e","#a855f7"];
+  const colors=["#facc15","#ffd60a","#ffbe0b","#fb8500","#ff006e","#3b82f6","#22c55e","#a855f7"];
 
   for(let i=0;i<180;i++){
     pieces.push({
@@ -291,7 +282,7 @@ function launchConfetti(){
       angle:Math.random()*360,
       curve:Math.random()*0.15+0.05,
       tilt:Math.random()*10,
-      c:cols[Math.floor(Math.random()*cols.length)]
+      c:colors[Math.floor(Math.random()*colors.length)]
     });
   }
 
@@ -313,25 +304,14 @@ function launchConfetti(){
   })();
 }
 
-/* WHATSAPP SHARE */
+/* WHATSAPP */
 function shareOnWhatsApp(){
-  const id=document.getElementById("mid").innerText;
   const prize=document.getElementById("mprize").innerText;
-  document.getElementById("s_id").innerText=id;
-  document.getElementById("s_prize").innerText=prize;
-
-  html2canvas(document.getElementById("shareCard")).then(canvas=>{
-    const a=document.createElement("a");
-    a.download="Balaji-Gaming-Win.png";
-    a.href=canvas.toDataURL("image/png");
-    a.click();
-
-    const phone="917264835489"; // 🔴 replace
-    const msg=encodeURIComponent(
-      `Hi, I won ${prize} in Balaji Gaming.\n\nScreenshot has been downloaded. Please attach it here 📎`
-    );
-    window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
-  });
+  const phone="91XXXXXXXXXX"; // CHANGE THIS
+  const msg=encodeURIComponent(
+    `Hi, I won ${prize} in Balaji Gaming. I have taken a screenshot of my winning result.`
+  );
+  window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
 }
 </script>
 
