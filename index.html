@@ -130,12 +130,29 @@ button:hover{background:var(--blue-hover)}
 }
 .modal h2{color:#1e40af;margin-bottom:6px}
 .note{font-size:13px;opacity:.75}
+  <button class="wa-btn" onclick="shareOnWhatsApp()">
+  📤 Share on WhatsApp
+</button>
 
 /* CONFETTI */
 #confettiCanvas{
   position:fixed;inset:0;
   pointer-events:none;
   z-index:1000;
+}
+  .wa-btn{
+  margin-top:14px;
+  padding:12px 18px;
+  background:#25D366;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+.wa-btn:hover{
+  background:#1ebe5d;
 }
 </style>
 </head>
@@ -326,7 +343,51 @@ function launchConfetti(){
     if(pieces.length)requestAnimationFrame(draw);
   })();
 }
-</script>
+  function shareOnWhatsApp(){
+  const gameId = document.getElementById("mid").innerText;
+  const prize = document.getElementById("mprize").innerText;
 
+  document.getElementById("s_id").innerText = gameId;
+  document.getElementById("s_prize").innerText = prize;
+
+  html2canvas(document.getElementById("shareCard")).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "Balaji-Gaming-Win.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    const whatsappNumber = "917264835489"; 
+    // 👆 Replace with your WhatsApp number (no +, no spaces)
+
+    const message = encodeURIComponent(
+      `Hi, I won ${prize} in Balaji Gaming. Please find the screenshot attached.`
+    );
+
+    window.open(
+      `https://wa.me/${whatsappNumber}?text=${message}`,
+      "_blank"
+    );
+  });
+}
+</script>
+<div id="shareCard" style="
+  position:fixed;
+  left:-9999px;
+  width:320px;
+  padding:20px;
+  background:#ffffff;
+  color:#000000;
+  border-radius:16px;
+  font-family:'Segoe UI', Arial, sans-serif;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+">
+  <h3 style="margin:0 0 10px;color:#1e40af">🎉 Balaji Gaming</h3>
+  <p><strong>Game ID:</strong> <span id="s_id"></span></p>
+  <p><strong>Prize Won:</strong> <span id="s_prize"></span></p>
+  <p style="font-size:12px;color:#555">
+    Please find my winning screenshot.
+  </p>
+</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
